@@ -27,7 +27,7 @@ Example:
 
 All tasks, progress tracking, and assignments are managed via our GitHub Project Board:
 
-🔗 [ETFD Task Board](https://github.com/users/Christian-Stefan/projects/2)
+🔗 [CLAV Task Board](https://github.com/users/Christian-Stefan/projects/2)
 
 Please refer to this board regularly to stay aligned with team priorities and deadlines.
 
