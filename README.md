@@ -11,9 +11,9 @@ To maintain clarity and consistency across our collaborative efforts, we follow 
 ```
 
 ### Examples:
-- `DeletedonAidan's branch<main.py>`
-- `AddedonFeature-X<utils.py>`
-- `UpdatedonMain<README.md>`
+- `<Deleted>on<Aidan's branch><main.py>`
+- `<Added>on<Feature-X><utils.py>`
+- `<Updated>on<Main><README.md>`
 
 ### Minor Changes
 For smaller, non-structural improvements (like converting a loop into a list comprehension), use:
