@@ -1,6 +1,6 @@
-# ETFD Repository
+# CLAV Repository
 
-Welcome to the ETFD main repository. This repository serves as the central hub for all project-related source code, documentation, and task tracking.
+Welcome to the CLAV main repository. This repository serves as the central hub for all project-related source code, documentation, and task tracking.
 
 ## 📅 Way of Working
 
@@ -42,4 +42,4 @@ To contribute:
 
 Thank you for helping us maintain a clean and efficient workflow!
 
-ETFD Team
+CLAV Team
