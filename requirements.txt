@@ -1,0 +1,6 @@
+# Compatible with Python 3.8–3.11
+
+ipykernel==6.29.5
+pydicom==2.4.4
+matplotlib==3.7.5
+numpy==1.24.4

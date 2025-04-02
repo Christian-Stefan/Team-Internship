@@ -1,0 +1,13 @@
+# Ignore Python venv
+venv/
+__pycache__/
+*.pyc
+
+# Jupyter notebooks checkpoints (if any)
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+
+# VSCode settings (if using)
+.vscode/
