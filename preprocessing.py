@@ -54,7 +54,7 @@ def preprocess(slice_paths,slice_coords,save_base_path,plot = False,save = False
         image = dicom_data.pixel_array.astype(np.float32)
 
         # Remove completely black background
-        non_black_mask = image > 0  # Ignore pure black regions outside scan
+        non_black_mask = image > 100  # Ignore pure black regions outside scan
         scan_region = binary_fill_holes(non_black_mask)  # Fill holes in the scan area
 
         # Apply thresholding **only inside the scan region**
