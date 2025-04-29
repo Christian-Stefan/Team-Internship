@@ -78,6 +78,32 @@ def preprocess(slice_paths,slice_coords,save_base_path,plot = False,save = False
         lungs_only[lung_mask] = image[lung_mask]
         image_out = lungs_only
 
+        if sum(sum(image_out))>5000000:
+            # Remove completely black background
+            non_black_mask = image > 200  # Ignore pure black regions outside scan
+            scan_region = binary_fill_holes(non_black_mask)  # Fill holes in the scan area
+
+            # Apply thresholding **only inside the scan region**
+            thresh = threshold_otsu(image[scan_region])  # Compute threshold ignoring black border
+            lung_mask = (image < thresh*0.4) & scan_region  # Select dark regions **inside the scan**
+
+            # Morphological operations to clean up
+            lung_mask = binary_dilation(lung_mask, iterations=3) # add back in some of the area around the lungs
+            lung_mask = binary_fill_holes(lung_mask)  # Fill small holes, helps if nodule was close to lung wall
+
+            # keep the two largest regions (lungs)
+            labeled_mask, num_features = label(lung_mask)
+            unique, counts = np.unique(labeled_mask, return_counts=True)
+            sorted_labels = sorted(zip(unique[1:], counts[1:]), key=lambda x: -x[1])[:2]  # Top 2 largest
+            lung_mask = np.isin(labeled_mask, [s[0] for s in sorted_labels])  # Keep only lungs
+
+            lung_mask = binary_erosion(lung_mask, disk(4)) # remove lung wall
+
+            # final mask
+            lungs_only = np.zeros_like(image)
+            lungs_only[lung_mask] = image[lung_mask]
+            image_out = lungs_only
+
         if segment:
             image_out = segment_nodule(image=image,lungs_only=lungs_only,slice=slice)
 
@@ -158,10 +184,12 @@ def pad_to_size(image,size):
     height, width = image.shape
     
     # Calculate padding amounts
-    pad_top = (size - height) // 2
-    pad_bottom = size - height - pad_top
-    pad_left = (size - width) // 2
-    pad_right = size - width - pad_left
+    pad_top = (size - height) // 2 if (size - height) // 2 >=0 else 0
+    pad_bottom = size - height - pad_top if size - height - pad_top >=0 else 0
+    pad_left = (size - width) // 2 if (size - width) // 2 >=0 else 0
+    pad_right = size - width - pad_left if size - width - pad_left >=0 else 0
+
+
 
     # Apply padding (black pixels = 0)
     padded_image = np.pad(image, ((pad_top, pad_bottom), (pad_left, pad_right)), mode='constant', constant_values=0)
