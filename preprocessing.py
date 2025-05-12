@@ -53,59 +53,13 @@ def preprocess(slice_paths,slice_coords,save_base_path,plot = False,save = False
 
         image = dicom_data.pixel_array.astype(np.float32)
 
-        # Remove completely black background
-        non_black_mask = image > 100  # Ignore pure black regions outside scan
-        scan_region = binary_fill_holes(non_black_mask)  # Fill holes in the scan area
-
-        # Apply thresholding **only inside the scan region**
-        thresh = threshold_otsu(image[scan_region])  # Compute threshold ignoring black border
-        lung_mask = (image < thresh) & scan_region  # Select dark regions **inside the scan**
-
-        # Morphological operations to clean up
-        lung_mask = binary_dilation(lung_mask, iterations=3) # add back in some of the area around the lungs
-        lung_mask = binary_fill_holes(lung_mask)  # Fill small holes, helps if nodule was close to lung wall
-
-        # keep the two largest regions (lungs)
-        labeled_mask, num_features = label(lung_mask)
-        unique, counts = np.unique(labeled_mask, return_counts=True)
-        sorted_labels = sorted(zip(unique[1:], counts[1:]), key=lambda x: -x[1])[:2]  # Top 2 largest
-        lung_mask = np.isin(labeled_mask, [s[0] for s in sorted_labels])  # Keep only lungs
-
-        lung_mask = binary_erosion(lung_mask, disk(4)) # remove lung wall
-
-        # final mask
-        lungs_only = np.zeros_like(image)
-        lungs_only[lung_mask] = image[lung_mask]
-        image_out = lungs_only
+        image_out = segment_lungs(image)
 
         if sum(sum(image_out))>5000000:
-            # Remove completely black background
-            non_black_mask = image > 200  # Ignore pure black regions outside scan
-            scan_region = binary_fill_holes(non_black_mask)  # Fill holes in the scan area
-
-            # Apply thresholding **only inside the scan region**
-            thresh = threshold_otsu(image[scan_region])  # Compute threshold ignoring black border
-            lung_mask = (image < thresh*0.4) & scan_region  # Select dark regions **inside the scan**
-
-            # Morphological operations to clean up
-            lung_mask = binary_dilation(lung_mask, iterations=3) # add back in some of the area around the lungs
-            lung_mask = binary_fill_holes(lung_mask)  # Fill small holes, helps if nodule was close to lung wall
-
-            # keep the two largest regions (lungs)
-            labeled_mask, num_features = label(lung_mask)
-            unique, counts = np.unique(labeled_mask, return_counts=True)
-            sorted_labels = sorted(zip(unique[1:], counts[1:]), key=lambda x: -x[1])[:2]  # Top 2 largest
-            lung_mask = np.isin(labeled_mask, [s[0] for s in sorted_labels])  # Keep only lungs
-
-            lung_mask = binary_erosion(lung_mask, disk(4)) # remove lung wall
-
-            # final mask
-            lungs_only = np.zeros_like(image)
-            lungs_only[lung_mask] = image[lung_mask]
-            image_out = lungs_only
+            image_out = segment_lungs(image, threshold_non_black = 200, threshold_lung_mult = 0.4)
 
         if segment:
-            image_out = segment_nodule(image=image,lungs_only=lungs_only,slice=slice)
+            image_out = segment_nodule(image=image,lungs_only=image_out,slice=slice)
 
         processed_out.append(image_out)
 
@@ -132,6 +86,32 @@ def preprocess(slice_paths,slice_coords,save_base_path,plot = False,save = False
         return processed_out
 
 
+
+def segment_lungs(image, threshold_non_black = 100, threshold_lung_mult = 1):
+    # Remove completely black background
+    non_black_mask = image > threshold_non_black  # Ignore pure black regions outside scan
+    scan_region = binary_fill_holes(non_black_mask)  # Fill holes in the scan area
+
+    # Apply thresholding **only inside the scan region**
+    thresh = threshold_otsu(image[scan_region])  # Compute threshold ignoring black border
+    lung_mask = (image < thresh*threshold_lung_mult) & scan_region  # Select dark regions **inside the scan**
+
+    # Morphological operations to clean up
+    lung_mask = binary_dilation(lung_mask, iterations=3) # add back in some of the area around the lungs
+    lung_mask = binary_fill_holes(lung_mask)  # Fill small holes, helps if nodule was close to lung wall
+
+    # keep the two largest regions (lungs)
+    labeled_mask, num_features = label(lung_mask)
+    unique, counts = np.unique(labeled_mask, return_counts=True)
+    sorted_labels = sorted(zip(unique[1:], counts[1:]), key=lambda x: -x[1])[:2]  # Top 2 largest
+    lung_mask = np.isin(labeled_mask, [s[0] for s in sorted_labels])  # Keep only lungs
+
+    lung_mask = binary_erosion(lung_mask, disk(4)) # remove lung wall
+
+    # final mask
+    lungs_only = np.zeros_like(image)
+    lungs_only[lung_mask] = image[lung_mask]
+    return lungs_only
 
 def segment_nodule(image,lungs_only,slice):
     height, width = image.shape
