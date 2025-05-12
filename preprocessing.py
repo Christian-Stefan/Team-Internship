@@ -4,7 +4,7 @@ import json, glob, re, os, pydicom
 from skimage.draw import polygon
 from skimage.filters import threshold_otsu
 from skimage.morphology import disk
-from scipy.ndimage import binary_fill_holes,label,binary_dilation,binary_erosion
+from scipy.ndimage import binary_fill_holes,label,binary_dilation,binary_erosion, binary_closing
 
 
 def get_slices(Json_path):
@@ -174,10 +174,16 @@ def segment_nodule(image,lungs_only,slice):
 
     cropped_image = masked_image[min_y:max_y, min_x:max_x]
 
-    cropped_image = pad_to_size(cropped_image,40)
-    cropped_image[(cropped_image < 130)] = 0
+    cropped_image = pad_to_size(cropped_image,64)
+    before_image = cropped_image.copy()
+    med = np.median(cropped_image[cropped_image != 0])
+    mask_fill = (cropped_image >= (med * 0.95)).astype(int)
+    mask_fill = binary_closing(mask_fill, structure=np.ones((3, 3)))
 
-    return cropped_image
+    cropped_image_out = np.zeros_like(cropped_image)
+    cropped_image_out[mask_fill.astype(bool)] = before_image[mask_fill.astype(bool)]
+
+    return cropped_image_out
 
 
 def pad_to_size(image,size):
