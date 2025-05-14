@@ -26,7 +26,7 @@ You can manually install them using pip:
 
 Usage
 ------
-
+!!!!!
 Below is an example of how to use the class in a Python script or notebook:
 
 ```python
