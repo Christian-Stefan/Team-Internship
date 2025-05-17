@@ -1,5 +1,8 @@
 # Team-Internship
+
 ## Model Variations (by Lan Ma)
+Original version (by Vani): Accuracy: 0.6422 F1 Score: 0.6151
+
 4 modified versions were tested to evaluate performance:
 1. *Local-CNN*  
    Only the `local branch` replaced with a 3-layer CNN.  
@@ -16,7 +19,7 @@
 3. *Context-ResNet* 
    Only the `context branch` replaced with a ResNet structure.  
    other two branches unchanged.
-   performance: Accuracy: 0.6743 F1 Score: 0.6608 
+   performance: Accuracy: 0.6743 F1 Score: 0.6608 (same as the ones of *Local-CNN*, i don't think it has beed trained successfully, additionally it took over 10h through 20 epochs)
    File: `model_contextResNet.ipynb`
 
 4. *Full-ResNet*
