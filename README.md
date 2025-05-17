@@ -5,10 +5,10 @@ Original version (by Vani): Accuracy: 0.6422 F1 Score: 0.6151
 
 4 modified versions were tested to evaluate performance:
 1. *Local-CNN*  
-   Only the `local branch` replaced with a 3-layer CNN.  
-   other two branches unchanged.
-   performance:  Accuracy: 0.6743  F1 Score: 0.6608
-   File: `model_localCNN3.ipynb`
+   - Only the `local branch` replaced with a 3-layer CNN.  
+   - other two branches unchanged.
+   - performance:  Accuracy: 0.6743  F1 Score: 0.6608
+   - File: `model_localCNN3.ipynb`
 
 2. *Local-ResNet*
    Only the `local branch` replaced with a ResNet structure.  
