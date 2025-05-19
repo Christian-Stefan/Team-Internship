@@ -63,15 +63,16 @@ The code assumes the following folder structure under your root path:
 
 ```
 Input_Data/
-├── Some_Random_Number/
-│   └── LIDC-IDRI/
-│       ├── LIDC-IDRI-0001.dcm
-│       ├── LIDC-IDRI-0002.dcm
-│       └── ...
-├── Another_Random_Number/
-│   └── LIDC-IDRI/
-│       ├── LIDC-IDRI-0001.dcm
-│       └── ...
+├── LIDC-IDRI-0637/
+│   └── 01-01-2000-NA-NA-64428/
+│       └── 187215.000000-NA-14556/
+│           └── 1-0024.dcm
+├── LIDC-IDRI-0644/
+│   └── 01-01-2000-NA-NA-65107/
+│       └── 936488.000000-NA-30457/
+│           ├── 1-0001.dcm
+│           ├── 1-0002.dcm
+│           └── 1-0003.dcm
 ```
 
 Each scan folder includes:
