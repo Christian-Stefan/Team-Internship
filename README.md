@@ -1,45 +1,21 @@
-# CLAV Repository
+# Local Context model branch
 
-Welcome to the CLAV main repository. This repository serves as the central hub for all project-related source code, documentation, and task tracking.
+This is a new temporary branch for the results of different local branch configurations
 
-## 📅 Way of Working
 
-To maintain clarity and consistency across our collaborative efforts, we follow a strict commit message structure. Every commit must adhere to the following format:
+## Residual Layer with attention
 
-```
-<Action>on<Branch><Affected Item>
-```
+This method has given a score of:
 
-### Examples:
-- `<Deleted>on<Aidan's branch><main.py>`
-- `<Added>on<Feature-X><utils.py>`
-- `<Updated>on<Main><README.md>`
+- 20 epochs:
+Accuracy: 0.7064
+F1 Score: 0.6888
 
-### Minor Changes
-For smaller, non-structural improvements (like converting a loop into a list comprehension), use:
-```
-<Minor>on<Branch><Affected Item>
-```
-Example:
-- `MinoronRefactorBranch<analysis.py>`
+- 40 epochs:
+Accuracy: 0.8211
+F1 Score: 0.8121
 
-## 📝 Task Management
 
-All tasks, progress tracking, and assignments are managed via our GitHub Project Board:
-
-🔗 [CLAV Task Board](https://github.com/users/Christian-Stefan/projects/2)
-
-Please refer to this board regularly to stay aligned with team priorities and deadlines.
-
-## 🔗 Contributing
-To contribute:
-1. Clone the repository
-2. Create a new branch from `main`
-3. Commit using the prescribed format
-4. Submit a Pull Request with a clear description of changes
-
----
-
-Thank you for helping us maintain a clean and efficient workflow!
-
-CLAV Team
+- 60 epochs:
+Accuracy: 0.8716
+F1 Score: 0.8726
