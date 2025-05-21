@@ -1,7 +1,6 @@
 # Team-Internship
 Model Variations (by Lan Ma.20250521)
 Original version (by Vani): Accuracy: 0.6422 F1 Score: 0.6151
-
 4 modified versions were tested to evaluate performance:
 
 1.Local-CNN
