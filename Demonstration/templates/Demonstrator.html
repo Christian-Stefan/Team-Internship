@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nodule Reconstruction Demonstrator</title>
+  <style>
+    body { font-family: Arial; padding: 30px; max-width: 700px; margin: auto; }
+    input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; }
+    button { padding: 10px 20px; font-size: 16px; }
+    img { margin-top: 20px; width: 100%; max-height: 500px; object-fit: contain; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h2>Nodule Reconstruction Demonstrator</h2>
+
+  <form action="/run" method="post">
+    <label>DICOM Folder Path:</label>
+    <input type="text" name="dcm_path" placeholder="e.g. /absolute/path/to/your/DICOM/folder" required>
+
+    <label>Segmentation JSON Path:</label>
+    <input type="text" name="json_path" placeholder="e.g. /absolute/path/to/your/segmentation.json" required>
+
+    <button type="submit">Run Nodule Reconstruction</button>
+  </form>
+
+  <h3>Output:</h3>
+  <img src="/static/recon.png" alt="Reconstruction Image" onerror="this.style.display='none';">
+</body>
+</html>
