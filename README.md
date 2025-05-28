@@ -1,7 +1,7 @@
 Documentation 
 ==========
 
-Nodule_Reconstruction
+Nodule_Reconstruction.
 ----------------------
 
 This repository contains a class `Nodule_Reconstruction` designed for reconstructing and visualizing 3D lung nodules from medical imaging segmentation files in JSON format. It enables researchers or developers to:
