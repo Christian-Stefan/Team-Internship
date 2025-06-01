@@ -26,7 +26,7 @@ This latest version is correctly tested. But this time a top 3 accuracy is shown
 
 this gave for the best model so far for this branch (which is the Local context residualLayer alt notebook):
 
-- 35 epochs:
+- 35 epochs:  
 Top-1 Accuracy: 0.5655  
 Top-1 F1 Score:  0.5612  
 Top-2 Accuracy: 0.7379  
