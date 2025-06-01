@@ -45,5 +45,8 @@ True: Bronchioloalveolar Hyperplasia, Top-1: Sarcomatoid Carcinoma (44.8%), Top-
 True: Squamous Cell Carcinoma, Top-1: Lymphoma (54.2%), Top-2: Bronchioloalveolar Hyperplasia (16.6%), Top-3: Squamous Cell Carcinoma (15.7%)  
 
 
+as can be seen in the examples, it really helps for this classification to not focus on the highest likelihood only. If you were to do this you would assume this model is bad: 57% accuracy. However as can be seen in the outputs, some nodules are quite similar to each other. Like the different types of carcinoma. Which really brings the accuracy of top-1 accuracy down. But most of the time the other versions of carcinoma are also in the top-3, which increases the accuracy a lot: 88%.  
+
+
 
 
