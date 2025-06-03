@@ -47,6 +47,16 @@ True: Squamous Cell Carcinoma, Top-1: Lymphoma (54.2%), Top-2: Bronchioloalveola
 
 as can be seen in the examples, it really helps for this classification to not focus on the highest likelihood only. If you were to do this you would assume this model is bad: 57% accuracy. However as can be seen in the outputs, some nodules are quite similar to each other. Like the different types of carcinoma. Which really brings the accuracy of top-1 accuracy down. But most of the time the other versions of carcinoma are also in the top-3, which increases the accuracy a lot: 88%.  
 
+Local context residualLayer altv2 gives this:
+
+- 40 epochs:
+Top-1 Accuracy: 0.6552
+Top-1 F1 Score:  0.6590
+Top-2 Accuracy: 0.8276
+Top-3 Accuracy: 0.8828
+
+which while having a better top-1 accuracy, does not have a significant better accuracy in the top-3 accuracy.
+
 
 
 
