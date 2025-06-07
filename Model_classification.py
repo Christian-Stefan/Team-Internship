@@ -61,7 +61,7 @@ class LocalBranch(nn.Module):
         # DEPTH: add two more blocks, channels doubling each time
         self.resblock1 = ResidualSEBlock(16, 32, stride=2)   # D/2→D/4
         self.resblock2 = ResidualSEBlock(32, 64, stride=2)  # D/4→D/8
-        self.resblock3 = ResidualSEBlock(64, 64, stride=1) # D/8→D/8
+        self.resblock3 = ResidualSEBlock(64, 128, stride=1) # D/8→D/8
         self.pool      = nn.AdaptiveAvgPool3d((1,1,1))       # → [B,128,1,1,1]
 
     def forward(self, x):
@@ -132,7 +132,7 @@ class TripleFusionModel(nn.Module):
         self.context_branch   = ContextBranch()         # output: [B,64]
         self.radiomics_branch = RadiomicsBranch(radiomics_dim)  # [B,32]
 
-        fused_dim = 64 + 64 + 32  # = 224
+        fused_dim = 128 + 64 + 32  # = 224
         self.attn_fusion = AttentionFusion(fused_dim)
 
         # balance the local features with a learnable scalar
@@ -205,26 +205,24 @@ class ModelClassification:
         self.model = self.model.to(device)
 
         class_names = [
-        # Benign
-        "Granuloma",
         "Active Infection",
-        "Sarcoidosis",
-        "Hamartoma",
-        "Bronchioloalveolar Hyperplasia",
-        "Intrapulmonary Lymph Nodes",
-        
-        # Malignant
         "Adenocarcinoma",
-        "Squamous Cell Carcinoma",
-        "Large Cell (Undifferentiated) Carcinoma",
-        "Small Cell Lung Cancer (SCLC)",
-        "Carcinoid Tumors",
-        "Sarcomatoid Carcinoma",
-        "Lymphoma",
         "Adenoid Cystic Carcinoma",
+        "Bronchioloalveolar Hyperplasia",
+        "Carcinoid Tumors",
+        "Granuloma",
+        "Hamartoma",
+        "Intrapulmonary Lymph Nodes",
+        "Large Cell (Undifferentiated) Carcinoma",
+        "Lymphoma",
         "Metastatic Tumors",
+        "Sarcoidosis",
+        "Sarcomatoid Carcinoma",
+        "Small Cell Lung Cancer (SCLC)",
+        "Squamous Cell Carcinoma",
         ]
 
+        
         class_names = list(class_names)  # 0 to 14 inclusive
         self.__evaluate_model(data_loader, device, class_names)
 

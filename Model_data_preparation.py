@@ -188,23 +188,21 @@ class ModelDataInput:
         self.df = self.df[self.df['slices_present'].apply(lambda x: len(x) > 0)]
         
         class_names = [
-            # Benign
-            "Granuloma",
-            "Active Infection",
-            "Sarcoidosis",
-            "Hamartoma",
-            "Bronchioloalveolar Hyperplasia",
-            "Intrapulmonary Lymph Nodes",
-            # Malignant
-            "Adenocarcinoma",
-            "Squamous Cell Carcinoma",
-            "Large Cell (Undifferentiated) Carcinoma",
-            "Small Cell Lung Cancer (SCLC)",
-            "Carcinoid Tumors",
-            "Sarcomatoid Carcinoma",
-            "Lymphoma",
-            "Adenoid Cystic Carcinoma",
-            "Metastatic Tumors"
+        "Active Infection",
+        "Adenocarcinoma",
+        "Adenoid Cystic Carcinoma",
+        "Bronchioloalveolar Hyperplasia",
+        "Carcinoid Tumors",
+        "Granuloma",
+        "Hamartoma",
+        "Intrapulmonary Lymph Nodes",
+        "Large Cell (Undifferentiated) Carcinoma",
+        "Lymphoma",
+        "Metastatic Tumors",
+        "Sarcoidosis",
+        "Sarcomatoid Carcinoma",
+        "Small Cell Lung Cancer (SCLC)",
+        "Squamous Cell Carcinoma",
         ]
 
         # Apply mapping
