@@ -55,8 +55,34 @@ Top-1 F1 Score:  0.6590
 Top-2 Accuracy: 0.8276
 Top-3 Accuracy: 0.8828
 
-which while having a better top-1 accuracy, does not have a significant better accuracy in the top-3 accuracy.
+which while having a better top-1 accuracy, does not have a significant better accuracy in the top-3 accuracy.  
 
+The pipeline which gives the evaluation output for 1 scan is explained next:  
+
+Model_data_preparation.py:  
+
+contains a class ModelDataInput, which takes for 1 scan:  
+- the json path of the nodule  
+- the scan path of the preprocessed nodule  
+- whether the input is the local dicom scans (nodule only) or the context dicom scans (lung area)  
+- the naming method of the dicom files  
+
+It outputs for 1 scan:  
+- the local volume or the context volume  
+- the radiomics  
+- the label  
+
+Model_classification.py:  
+
+contains a class ModelClassification, which takes for 1 scan:  
+- the modelpkl (for now only works with trained models from the Local_context_residualLayer alt.ipynb notebook)  
+- the local volume  
+- the context volume  
+- the radiomics  
+- the label  
+
+It outputs for 1 scan:  
+The true label and the Top 3 prediction
 
 
 
