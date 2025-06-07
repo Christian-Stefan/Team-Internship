@@ -109,19 +109,25 @@ class ModelDataInput:
         self.local_or_context = local_or_context
         self.naming_method = naming_method
         self.data = []
+        self.df = pd.DataFrame()
         self.locals  = []
         self.contexts = []
+        self.volume_local = []
+        self.volume_context = []
         self.labels = []
+        self.radiomics = []
+        self.le = LabelEncoder()
 
     def get_radiomics(self):
 
         self.__extract_data()
         self.__to_dataframe()
         self.__process_data()
+        self.__get_radiomics()
 
         match = re.search(r"LIDC-IDRI-\d{4}", self.scan_path)
 
-        for slice_list in self.data["slices_present"]:
+        for slice_list in self.df["slices_present"]:
             for idx, slice_index in enumerate(slice_list):
                 if "Local" in self.local_or_context:
                     if "Pipeline" in self.naming_method:
@@ -133,9 +139,13 @@ class ModelDataInput:
                 if "Context" in self.local_or_context:
                     if "Pipeline" in self.naming_method:
                         self.contexts.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ "Lung"+str(match)+"_1-" + str(slice_index.zfill(4))+".dcm",size=(256,256)))
+
                     if "Aidan" in self.naming_method:
                         self.contexts.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ str(idx)+".dcm",size=(256,256)))
-
+        if "Local" in self.local_or_context:
+            self.volume_local = self.__pad_or_crop_volume(self.locals,target_depth=5, shape=(64, 64))
+        if "Context" in self.local_or_context:
+            self.volume_context = self.__pad_or_crop_volume(self.contexts, target_depth=7, shape=(256, 256))
     def __extract_data(self):
         with open(self.json_path, "r") as f:
             data = json.load(f)
@@ -166,18 +176,42 @@ class ModelDataInput:
             })
         
     def __to_dataframe(self):
-        self.data = pd.DataFrame(self.data)
+        self.df = pd.DataFrame(self.data)
     
     def __process_data(self):
-        self.data["slices_present"] = self.data["slices_present"].apply(
+        self.df["nodule_name"] = self.df["nodule_name"].replace("Hyperplasia", "Bronchioloalveolar Hyperplasia")
+        self.df["nodule_name"] = self.df["nodule_name"].replace("Granuloma - Active Infection", "Active Infection")
+        self.df["slices_present"] = self.df["slices_present"].apply(
             lambda x: ast.literal_eval(x) if isinstance(x, str) else x
         )
 
-        self.data = self.data[self.data['slices_present'].apply(lambda x: len(x) > 0)]
+        self.df = self.df[self.df['slices_present'].apply(lambda x: len(x) > 0)]
         
-        le = LabelEncoder()
-        self.data['label'] = le.fit_transform(self.data['nodule_name'])
-        self.labels = self.data['label']
+        class_names = [
+            # Benign
+            "Granuloma",
+            "Active Infection",
+            "Sarcoidosis",
+            "Hamartoma",
+            "Bronchioloalveolar Hyperplasia",
+            "Intrapulmonary Lymph Nodes",
+            # Malignant
+            "Adenocarcinoma",
+            "Squamous Cell Carcinoma",
+            "Large Cell (Undifferentiated) Carcinoma",
+            "Small Cell Lung Cancer (SCLC)",
+            "Carcinoid Tumors",
+            "Sarcomatoid Carcinoma",
+            "Lymphoma",
+            "Adenoid Cystic Carcinoma",
+            "Metastatic Tumors"
+        ]
+
+        # Apply mapping
+        self.df['label'] = self.df['nodule_name'].apply(lambda name: class_names.index(name) if name in class_names else -1)
+
+        # Save the class list (optional)
+        self.labels = self.df['label']
 
     def __slice_load(self,dcm_path, size):
         dcm_image = pydicom.dcmread(dcm_path)
@@ -190,3 +224,84 @@ class ModelDataInput:
         cropped_image = cv2.resize(img, size)
 
         return cropped_image
+    
+    def __pad_or_crop_volume(self, slices,target_depth, shape):
+        D = len(slices)
+        h, w = shape
+
+        if D == 0:
+            return np.zeros((1, target_depth, h, w), dtype=np.float32)
+
+        volume = np.stack(slices, axis=0)
+
+        if D < target_depth:
+            pad_before = (target_depth - D) // 2
+            pad_after = target_depth - D - pad_before
+            volume = np.pad(volume, ((pad_before, pad_after), (0, 0), (0, 0)), mode='constant')
+        elif D > target_depth:
+            start = (D - target_depth) // 2
+            volume = volume[start:start+target_depth]
+
+        return volume[None, ...]  # Add channel dim: [1, D, H, W]
+    
+    def __get_radiomics(self):
+        radiomics_columns = [
+        "calcification", "internal_structure", "lobulation",
+        "margin", "sphericity", "texture"
+        ]
+        one_hot_dict = {
+            "calcification": [
+                "calcification_Absent",
+                "calcification_Central",
+                "calcification_Laminated",
+                "calcification_Non-Central",
+                "calcification_Popcorn",
+                "calcification_Solid",
+            ],
+            "internal_structure": [
+                "internal_structure_Soft Tissue",
+            ],
+            "lobulation": [
+                "lobulation_Marked",
+                "lobulation_N-Marked",
+                "lobulation_Nn-Mk",
+                "lobulation_None-M",
+            ],
+            "margin": [
+                "margin_P-Sharp",
+                "margin_Poo-Sh",
+                "margin_Poorly",
+                "margin_Poorly-S",
+                "margin_Sharp",
+            ],
+            "sphericity": [
+                "sphericity_Lin-Ov",
+                "sphericity_Linear",
+                "sphericity_Ov-Ro",
+                "sphericity_Ovoid",
+                "sphericity_Round",
+            ],
+            "texture": [
+                "texture_NS-PS",
+                "texture_PS-Solid",
+                "texture_Part Solid/Mixed",
+                "texture_Solid",
+            ],
+        }
+
+        # Extract just the columns of interest from self.df
+        radiomics_df = self.df[radiomics_columns].copy()
+
+        # One-hot encode these columns
+        radiomics_encoded = pd.get_dummies(radiomics_df, drop_first=False)
+
+        # Create a full list of expected columns by flattening the dict values
+        full_columns = []
+        for cols in one_hot_dict.values():
+            full_columns.extend(cols)
+
+        # Reindex to the full set of columns, filling missing columns with 0
+        radiomics_encoded = radiomics_encoded.reindex(columns=full_columns, fill_value=0)
+
+        # Convert to numpy array
+        self.radiomics = radiomics_encoded.to_numpy(dtype=np.float32)
