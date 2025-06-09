@@ -17,3 +17,5 @@ To get only the nodule back, first the area is taken based on the coordinates fr
 ## segment.ipynb
 
 this notebook was used to generate all the segmented dicom files and save them.
+
+The Local context branch notebooks use the same environment as this branch and the output of the pre-processed dicom files from segment.ipynb
