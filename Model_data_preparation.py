@@ -126,19 +126,20 @@ class ModelDataInput:
         self.__get_radiomics()
 
         match = re.search(r"LIDC-IDRI-\d{4}", self.scan_path)
+        match = match.group()
 
         for slice_list in self.df["slices_present"]:
             for idx, slice_index in enumerate(slice_list):
                 if "Local" in self.local_or_context:
                     if "Pipeline" in self.naming_method:
-                        self.locals.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ "Nodule"+str(match)+"_1-" + str(slice_index.zfill(4))+".dcm" , size=(64,64)))
+                        self.locals.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ "Nodule"+str(match)+"_1-" + str(slice_index).zfill(4)+".dcm" , size=(64,64)))
                     
                     if "Aidan" in self.naming_method:
                         self.locals.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ str(idx)+".dcm" , size=(64,64)))
                     
                 if "Context" in self.local_or_context:
                     if "Pipeline" in self.naming_method:
-                        self.contexts.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ "Lung"+str(match)+"_1-" + str(slice_index.zfill(4))+".dcm",size=(256,256)))
+                        self.contexts.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ "Lung"+str(match)+"_1-" + str(slice_index).zfill(4)+".dcm",size=(256,256)))
 
                     if "Aidan" in self.naming_method:
                         self.contexts.append(self.__slice_load(dcm_path = self.scan_path +"\\"+ str(idx)+".dcm",size=(256,256)))
