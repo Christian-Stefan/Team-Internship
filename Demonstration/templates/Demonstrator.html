@@ -24,6 +24,20 @@
   </form>
 
   <h3>Output:</h3>
-  <img src="/static/recon.png" alt="Reconstruction Image" onerror="this.style.display='none';">
+
+<img src="/static/recon.png" alt="Reconstruction Image" onerror="this.style.display='none';">
+
+<h3>Prediction:</h3>
+<div style="background: #f8f8f8; padding: 10px; border: 1px solid #ddd;">
+  <pre>{{ prediction_text }}</pre>
+</div>
+
+
+<h3>Explainability:</h3>
+<div style="display: flex; gap: 10px;">
+  <img src="/static/explainable_map_lungs.png" alt="Lung Explainable Map" style="flex:1; max-width: 49%; object-fit: contain; border: 1px solid #ccc;" onerror="this.style.display='none';">
+  <img src="/static/explainable_map_nodule.png" alt="Nodule Explainable Map" style="flex:1; max-width: 49%; object-fit: contain; border: 1px solid #ccc;" onerror="this.style.display='none';">
+</div>
+
 </body>
 </html>

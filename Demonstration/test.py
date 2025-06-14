@@ -1,0 +1,2 @@
+path = r'D:\Cristi_s_ground\University\TeamInternship\DEMO\Team-Internship\Demonstration\samples\LIDC-IDRI-0007\01-01-2000-NA-NA-03266\2511660.000000-NA-63885\segmentation_00007.json'
+print(path.split('\\')[-1].split('segmentation_0')[1].split('.json')[0])
